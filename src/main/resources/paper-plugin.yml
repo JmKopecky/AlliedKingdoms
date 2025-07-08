@@ -1,0 +1,7 @@
+name: AlliedKingdoms
+version: 0.0.1
+main: dev.jkopecky.alliedkingdoms.AlliedKingdoms
+description: A medieval take on factions.
+api-version: '1.21.7'
+bootstrapper: dev.jkopecky.alliedkingdoms.AlliedKingdomsBootstrapper
+loader: dev.jkopecky.alliedkingdoms.AlliedKingdomsLoader

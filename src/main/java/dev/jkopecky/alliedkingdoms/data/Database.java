@@ -1,5 +1,9 @@
 package dev.jkopecky.alliedkingdoms.data;
 
+import dev.jkopecky.alliedkingdoms.Palette;
+import net.kyori.adventure.text.Component;
+import org.bukkit.scheduler.BukkitScheduler;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,15 +12,24 @@ import java.sql.Statement;
 public class Database {
 
 
-    private static final String databaseUrl = "jdbc:sqlite:plugins/AlliedKingdoms/database.db";
+    public static final String databaseUrl = "jdbc:sqlite:plugins/AlliedKingdoms/database.db";
     private static final String factionTableSQL =
             "CREATE TABLE IF NOT EXISTS kingdoms (" +
-            "id INTEGER PRIMARY KEY," +
+            "id INTEGER AUTO_INCREMENT," +
             "name TEXT," +
             "owner TEXT," +
             "tagline TEXT," +
-            "peaceful BOOLEAN" +
+            "peaceful BOOLEAN," +
+            "members TEXT," +
+            "chunks TEXT," +
+            "PRIMARY KEY (id)" +
             ");";
+    private static final String playerTableSQL =
+            "CREATE TABLE IF NOT EXISTS players ("
+            + "id INTEGER AUTO_INCREMENT,"
+            + "name TEXT,"
+            + "uuid TEXT,"
+            + "PRIMARY KEY (id));";
 
 
     public static void initDatabase() {
@@ -30,6 +43,8 @@ public class Database {
 
             //create tables if they do not already exist
             statement.execute(factionTableSQL);
+            statement = connection.createStatement();
+            statement.execute(playerTableSQL);
 
             //close connections
             connection.close();

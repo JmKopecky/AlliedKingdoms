@@ -23,9 +23,9 @@ Factions system that encourages building actual castles and structures rather th
 
 
 # Needed commands
-* Create kingdom
-* Delete kingdom
-* View kingdom info
+* ~~Create kingdom~~
+* ~~Delete kingdom~~
+* ~~View kingdom info~~
 * Rename kingdom
 * Set kingdom tagline
 * Invite member to kingdom
