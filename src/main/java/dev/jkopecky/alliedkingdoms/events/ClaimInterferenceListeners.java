@@ -2,12 +2,14 @@ package dev.jkopecky.alliedkingdoms.events;
 
 import dev.jkopecky.alliedkingdoms.AlliedKingdomsBootstrapper;
 import dev.jkopecky.alliedkingdoms.Palette;
+import dev.jkopecky.alliedkingdoms.data.Database;
 import dev.jkopecky.alliedkingdoms.data.PDCDataKeys;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +17,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.sql.*;
 
 public class ClaimInterferenceListeners implements Listener {
 
@@ -72,12 +76,55 @@ public class ClaimInterferenceListeners implements Listener {
             playerKingdom = playerContainer.get(playerKey, PersistentDataType.STRING);
         }
 
-        if (playerKingdom.equals(chunkKingdom)) {
+        if (!playerKingdom.equals(chunkKingdom)) {
+            //player is not allowed to break blocks in this chunk
+            player.sendMessage(Component.text("You are not allowed to break blocks in chunks owned by " + chunkKingdom, Palette.ERROR));
+            event.setCancelled(true);
             return;
         }
 
-        //player is not allowed to break blocks in this chunk
-        player.sendMessage(Component.text("You are not allowed to break blocks in chunks owned by " + chunkKingdom, Palette.ERROR));
-        event.setCancelled(true);
+        //check that the blocks are not the throne
+        Block block = event.getBlock();
+        Block gold;
+        boolean isGold = block.getType().name().equals("GOLD_BLOCK");
+        boolean isUnderStairs = block.getRelative(BlockFace.UP, 1).getType().name().contains("STAIRS");
+        boolean isStairs = block.getType().name().contains("STAIRS");
+        boolean isAboveGold = block.getRelative(BlockFace.DOWN, 1).getType().name().equals("GOLD_BLOCK");
+        if (isGold && isUnderStairs || isStairs && isAboveGold) {
+            if (isGold) {
+                gold = block;
+            } else {
+                gold = block.getRelative(BlockFace.DOWN, 1);
+            }
+
+            //might be a throne. Need to check the database to see if the kingdom's throne is at that location
+            try (Connection connection = DriverManager.getConnection(Database.databaseUrl)) {
+
+                String sql = "SELECT * FROM kingdoms WHERE name=?";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setString(1, playerKingdom);
+                ResultSet result = statement.executeQuery();
+                if (result.next()) {
+                    String serializedThrone = result.getString("throne");
+                    if (serializedThrone.isEmpty()) {
+                        return;
+                    }
+
+                    String[] throneBlockCoords = serializedThrone.split("&throne=")[1].split(",");
+                    if (gold.getX() == Integer.parseInt(throneBlockCoords[0])
+                            && gold.getY() == Integer.parseInt(throneBlockCoords[1])
+                            && gold.getZ() == Integer.parseInt(throneBlockCoords[2])) {
+                        //player is attempting to break their kingdom's throne. Not permitted.
+                        player.sendMessage(Component.text("You cannot break the kingdom's throne until a new one is created", Palette.PRIMARY));
+                        event.setCancelled(true);
+                    }
+                } else {
+                    player.sendMessage(Component.text("Your kingdom was not found in the database. Contact the plugin developer. Check the logs.", Palette.ERROR));
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

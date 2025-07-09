@@ -120,8 +120,8 @@ public class CreateKingdomCommand {
 
                 //create the kingdom
                 String sql = "INSERT INTO kingdoms " +
-                        "(name, owner, tagline, peaceful, members, chunks) " +
-                        "VALUES (?,?,?,?,?,?)";
+                        "(name, owner, tagline, peaceful, members, chunks, throne) " +
+                        "VALUES (?,?,?,?,?,?,?)";
                 PreparedStatement createKingdomStatement = connection.prepareStatement(sql);
                 createKingdomStatement.setString(1, name);
                 createKingdomStatement.setString(2, player.getUniqueId().toString());
@@ -130,6 +130,7 @@ public class CreateKingdomCommand {
                 String members = player.getUniqueId().toString();
                 createKingdomStatement.setString(5, members);
                 createKingdomStatement.setString(6, "");
+                createKingdomStatement.setString(7, "");
                 createKingdomStatement.executeUpdate();
 
                 playerData.set(playerKingdomKey, PersistentDataType.STRING, name);

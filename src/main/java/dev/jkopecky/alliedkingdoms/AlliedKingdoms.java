@@ -2,6 +2,7 @@ package dev.jkopecky.alliedkingdoms;
 
 import dev.jkopecky.alliedkingdoms.data.Database;
 import dev.jkopecky.alliedkingdoms.events.ClaimInterferenceListeners;
+import dev.jkopecky.alliedkingdoms.events.KingdomEvents;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -19,6 +20,7 @@ public class AlliedKingdoms extends JavaPlugin implements Listener {
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new ClaimInterferenceListeners(), this);
+        Bukkit.getPluginManager().registerEvents(new KingdomEvents(), this);
 
         Database.initDatabase();
     }

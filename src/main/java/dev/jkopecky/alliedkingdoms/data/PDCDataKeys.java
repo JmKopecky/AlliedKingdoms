@@ -9,6 +9,7 @@ public class PDCDataKeys {
 
     private static NamespacedKey playerKingdomKey = null;
     private static NamespacedKey chunkKingdomKey = null;
+    private static NamespacedKey throneKingdomKey = null;
 
 
     public static NamespacedKey getPlayerKingdomKey() {
@@ -24,5 +25,13 @@ public class PDCDataKeys {
             chunkKingdomKey = new NamespacedKey(AlliedKingdomsBootstrapper.pluginInstance, "chunk_kingdom");
         }
         return chunkKingdomKey;
+    }
+
+
+    public static NamespacedKey getThroneKingdomKey() {
+        if (throneKingdomKey == null) {
+            throneKingdomKey = new NamespacedKey(AlliedKingdomsBootstrapper.pluginInstance, "throne_kingdom");
+        }
+        return throneKingdomKey;
     }
 }

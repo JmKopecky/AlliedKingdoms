@@ -22,6 +22,7 @@ public class Database {
             "peaceful BOOLEAN," +
             "members TEXT," +
             "chunks TEXT," +
+            "throne TEXT," +
             "PRIMARY KEY (id)" +
             ");";
     private static final String playerTableSQL =

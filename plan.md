@@ -26,6 +26,9 @@ Factions system that encourages building actual castles and structures rather th
 * ~~Create kingdom~~
 * ~~Delete kingdom~~
 * ~~View kingdom info~~
+* ~~Claim Land~~
+* ~~Unclaim Land~~
+* ~~Kingdom Throne TP~~
 * Rename kingdom
 * Set kingdom tagline
 * Invite member to kingdom
