@@ -42,6 +42,11 @@ public class ClaimLandCommand {
 
             Chunk chunk = player.getChunk();
 
+            //check if chunk is in the overworld
+            if (!chunk.getWorld().getName().equals(player.getServer().getWorlds().getFirst().getName())) {
+                sender.sendMessage(Component.text("Chunk must be in the overworld", Palette.ERROR));
+            }
+
             //check if chunk is available to claim
             NamespacedKey chunkKingdomKey = PDCDataKeys.getChunkKingdomKey();
             PersistentDataContainer chunkContainer = chunk.getPersistentDataContainer();

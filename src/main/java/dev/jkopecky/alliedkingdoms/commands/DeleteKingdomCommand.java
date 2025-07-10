@@ -8,6 +8,7 @@ import dev.jkopecky.alliedkingdoms.AlliedKingdomsBootstrapper;
 import dev.jkopecky.alliedkingdoms.Palette;
 import dev.jkopecky.alliedkingdoms.data.Database;
 import dev.jkopecky.alliedkingdoms.data.PDCDataKeys;
+import dev.jkopecky.alliedkingdoms.util.KingdomUtilMethods;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -77,35 +78,8 @@ public class DeleteKingdomCommand {
                     return;
                 }
 
-                //retreive chunks
-                String chunks = "";
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM kingdoms WHERE name=?");
-                statement.setString(1, kingdomName);
-                ResultSet result = statement.executeQuery();
-                if (result.next()) {
-                    chunks = result.getString("chunks");
-                }
-
                 //unclaim all chunks
-                if (!chunks.isEmpty()) {
-                    NamespacedKey chunkKingdomKey = PDCDataKeys.getChunkKingdomKey();
-                    for (World world : server.getWorlds()) {
-                        for (String chunkId : chunks.split(",")) {
-                            try {
-                                long chunkKey = Long.parseLong(chunkId);
-                                PersistentDataContainer container = world.getChunkAt(chunkKey).getPersistentDataContainer();
-                                if (container.has(chunkKingdomKey, PersistentDataType.STRING)) {
-                                    String chunkKingdom = container.get(chunkKingdomKey, PersistentDataType.STRING);
-                                    if (chunkKingdom.equals(kingdomName)) {
-                                        container.remove(chunkKingdomKey);
-                                    }
-                                }
-                            } catch (NumberFormatException e) {
-                                sender.sendMessage(Component.text("Error encountered while unclaiming chunks", Palette.ERROR));
-                            }
-                        }
-                    }
-                }
+                KingdomUtilMethods.unclaimAll(kingdomName, server);
 
                 //delete kingdom
                 String deleteSql = "DELETE FROM kingdoms WHERE name=?";

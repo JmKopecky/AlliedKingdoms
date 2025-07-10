@@ -4,6 +4,7 @@ import dev.jkopecky.alliedkingdoms.AlliedKingdomsBootstrapper;
 import dev.jkopecky.alliedkingdoms.Palette;
 import dev.jkopecky.alliedkingdoms.data.Database;
 import dev.jkopecky.alliedkingdoms.data.PDCDataKeys;
+import dev.jkopecky.alliedkingdoms.util.KingdomUtilMethods;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -48,9 +49,11 @@ public class ClaimInterferenceListeners implements Listener {
             return;
         }
 
-        //player is not allowed to place blocks in this chunk
-        player.sendMessage(Component.text("You are not allowed to build in chunks owned by " + chunkKingdom, Palette.ERROR));
-        event.setCancelled(true);
+        if (!KingdomUtilMethods.isKingdomDestitute(chunkKingdom)) {
+            //player is not allowed to place blocks in this chunk
+            player.sendMessage(Component.text("You are not allowed to build in chunks owned by " + chunkKingdom, Palette.ERROR));
+            event.setCancelled(true);
+        }
     }
 
 
@@ -77,10 +80,13 @@ public class ClaimInterferenceListeners implements Listener {
         }
 
         if (!playerKingdom.equals(chunkKingdom)) {
-            //player is not allowed to break blocks in this chunk
-            player.sendMessage(Component.text("You are not allowed to break blocks in chunks owned by " + chunkKingdom, Palette.ERROR));
-            event.setCancelled(true);
-            return;
+            //player is not allowed to break blocks in this chunk under normal circumstances
+            //check destitution state
+            if (!KingdomUtilMethods.isKingdomDestitute(chunkKingdom)) {
+                player.sendMessage(Component.text("You are not allowed to break blocks in chunks owned by " + chunkKingdom, Palette.ERROR));
+                event.setCancelled(true);
+                return;
+            }
         }
 
         //check that the blocks are not the throne

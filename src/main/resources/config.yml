@@ -1,0 +1,5 @@
+root:
+  kingdom-charge-delay-multiplier: 1
+  kingdom-charge-cost: 10
+  kingdom-strike-limit-before-destitution: 3
+  kingdom-strike-limit-before-dissolution: 14

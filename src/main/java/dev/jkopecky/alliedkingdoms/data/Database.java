@@ -1,5 +1,6 @@
 package dev.jkopecky.alliedkingdoms.data;
 
+import dev.jkopecky.alliedkingdoms.AlliedKingdomsBootstrapper;
 import dev.jkopecky.alliedkingdoms.Palette;
 import net.kyori.adventure.text.Component;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -24,6 +25,8 @@ public class Database {
             "chunks TEXT," +
             "throne TEXT," +
             "vault NUMERIC," +
+            "accruedvalue NUMERIC," +
+            "strikes INTEGER," +
             "PRIMARY KEY (id)" +
             ");";
     private static final String playerTableSQL =

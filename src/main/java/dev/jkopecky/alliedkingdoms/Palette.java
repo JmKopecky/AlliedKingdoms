@@ -9,4 +9,5 @@ public class Palette {
     public static final TextColor SECONDARY = TextColor.color(0x3A5A69);
     public static final TextColor ACCENT = TextColor.color(0x459EB7);
     public static final TextColor ERROR = TextColor.color(200, 10, 10);
+    public static final TextColor STRIKE_COLOR = TextColor.color(240, 5, 5);
 }

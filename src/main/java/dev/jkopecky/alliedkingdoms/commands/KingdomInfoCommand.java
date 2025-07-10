@@ -91,6 +91,8 @@ public class KingdomInfoCommand {
                         chunkCount = chunks.split(",").length;
                     }
                     double vault = resultSet.getDouble("vault");
+                    double value = resultSet.getDouble("accruedvalue");
+                    int strikes = resultSet.getInt("strikes");
                     String ownerUUID = resultSet.getString("owner");
                     Player owner = Bukkit.getPlayer(UUID.fromString(ownerUUID));
                     String ownerName;
@@ -131,6 +133,13 @@ public class KingdomInfoCommand {
                     message = message.appendNewline()
                             .append(Component.text("Vault: ", Palette.PRIMARY)
                             .append(Component.text(vault, Palette.ACCENT)));
+                    message = message.appendNewline()
+                            .append(Component.text("Accrued Value: ", Palette.PRIMARY)
+                            .append(Component.text(value, Palette.ACCENT)));
+                    if (strikes > 0) {
+                        message = message.appendNewline();
+                        message = message.append(Component.text("STRIKES: " + strikes, Palette.STRIKE_COLOR));
+                    }
                     if (executor instanceof Player player) {
                         player.sendMessage(message);
                     } else {
