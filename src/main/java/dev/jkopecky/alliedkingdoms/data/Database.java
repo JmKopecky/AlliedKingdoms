@@ -23,6 +23,7 @@ public class Database {
             "members TEXT," +
             "chunks TEXT," +
             "throne TEXT," +
+            "vault NUMERIC," +
             "PRIMARY KEY (id)" +
             ");";
     private static final String playerTableSQL =

@@ -4,20 +4,43 @@ import dev.jkopecky.alliedkingdoms.data.Database;
 import dev.jkopecky.alliedkingdoms.events.ClaimInterferenceListeners;
 import dev.jkopecky.alliedkingdoms.events.KingdomEvents;
 import net.kyori.adventure.text.Component;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.server.ServiceRegisterEvent;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.sql.*;
 
 public class AlliedKingdoms extends JavaPlugin implements Listener {
 
 
+    public static Economy ECONOMY = null;
+    public static Permission PERMISSIONS = null;
+    public static Chat CHAT = null;
+
+
     @Override
     public void onEnable() {
+
+        if (!setupEconomy() ) {
+            getLogger().severe("AlliedKingdoms - Vault dependency missing - disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (!setupPermissions()) {
+            getLogger().info("AlliedKingdoms - No permissions plugin detected");
+        }
+        if (!setupChat()) {
+            getLogger().info("AlliedKingdoms - No chat plugin detected");
+        }
+
+
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new ClaimInterferenceListeners(), this);
         Bukkit.getPluginManager().registerEvents(new KingdomEvents(), this);
@@ -41,5 +64,41 @@ public class AlliedKingdoms extends JavaPlugin implements Listener {
             //todo logging
             e.printStackTrace();
         }
+    }
+
+
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        try {
+            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+            if (rsp == null) {
+                return false;
+            }
+            ECONOMY = rsp.getProvider();
+            return ECONOMY != null;
+        } catch (NoClassDefFoundError e) {
+            return false;
+        }
+    }
+
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+        if (rsp == null) {
+            return false;
+        }
+        CHAT = rsp.getProvider();
+        return CHAT != null;
+    }
+
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        if (rsp == null) {
+            return false;
+        }
+        PERMISSIONS = rsp.getProvider();
+        return PERMISSIONS != null;
     }
 }

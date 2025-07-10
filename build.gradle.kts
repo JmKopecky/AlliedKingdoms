@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.jkopecky"
-version = "0.2.0-SNAPSHOT"
+version = "0.3.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -13,12 +13,16 @@ repositories {
         name = "papermc"
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 }
 
 tasks.test {

@@ -83,6 +83,14 @@ public class KingdomInfoCommand {
                     boolean peaceful = resultSet.getBoolean("peaceful");
                     String members = resultSet.getString("members");
                     int memberCount = members.split(",").length;
+                    String chunks = resultSet.getString("chunks");
+                    int chunkCount;
+                    if (chunks.isEmpty()) {
+                        chunkCount = 0;
+                    } else {
+                        chunkCount = chunks.split(",").length;
+                    }
+                    double vault = resultSet.getDouble("vault");
                     String ownerUUID = resultSet.getString("owner");
                     Player owner = Bukkit.getPlayer(UUID.fromString(ownerUUID));
                     String ownerName;
@@ -117,6 +125,12 @@ public class KingdomInfoCommand {
                     message = message.appendNewline()
                             .append(Component.text("Members: ", Palette.PRIMARY)
                             .append(Component.text(memberCount, Palette.ACCENT)));
+                    message = message.appendNewline()
+                            .append(Component.text("# Chunks: ", Palette.PRIMARY)
+                            .append(Component.text(chunkCount, Palette.ACCENT)));
+                    message = message.appendNewline()
+                            .append(Component.text("Vault: ", Palette.PRIMARY)
+                            .append(Component.text(vault, Palette.ACCENT)));
                     if (executor instanceof Player player) {
                         player.sendMessage(message);
                     } else {

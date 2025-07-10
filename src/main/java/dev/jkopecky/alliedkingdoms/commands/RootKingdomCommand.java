@@ -32,6 +32,8 @@ public class RootKingdomCommand {
         root.then(ClaimLandCommand.get());
         root.then(UnclaimLandCommand.get());
         root.then(KingdomTeleportCommand.get());
+        root.then(KingdomDepositCommand.get());
+        root.then(KingdomWithdrawCommand.get());
 
         String description = "Manage kingdoms";
         ArrayList<String> aliases = new ArrayList<>();

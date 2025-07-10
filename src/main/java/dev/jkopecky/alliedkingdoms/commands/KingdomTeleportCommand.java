@@ -53,6 +53,7 @@ public class KingdomTeleportCommand {
                     String throne = result.getString("throne");
                     if (throne.isEmpty()) {
                         player.sendMessage(Component.text("Your kingdom does not have a throne", Palette.ERROR));
+                        return Command.SINGLE_SUCCESS;
                     }
                     String[] warpLocation = throne.split("&throne=")[0].split("warp=")[1].split(",");
                     player.sendMessage(Component.text("Teleporting...", Palette.PRIMARY));

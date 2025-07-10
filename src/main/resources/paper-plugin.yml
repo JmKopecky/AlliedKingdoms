@@ -1,7 +1,15 @@
 name: AlliedKingdoms
-version: 0.0.1
+version: 0.3.0
 main: dev.jkopecky.alliedkingdoms.AlliedKingdoms
 description: A medieval take on factions.
 api-version: '1.21.7'
 bootstrapper: dev.jkopecky.alliedkingdoms.AlliedKingdomsBootstrapper
 loader: dev.jkopecky.alliedkingdoms.AlliedKingdomsLoader
+dependencies:
+  server:
+    # Add a required "RequiredPlugin" dependency, which will load AFTER your plugin.
+    Vault:
+      load: BEFORE
+      required: true
+      # This means that your plugin will not have access to their classpath
+      join-classpath: true
