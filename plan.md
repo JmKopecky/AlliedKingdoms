@@ -20,6 +20,7 @@ Factions system that encourages building actual castles and structures rather th
 
 # Wars & Raiding
 * Kingdoms must be able to opt out of wars and raiding. This means they cannot attack others but they cannot be attacked.
+* The only way to bypass claims is to use special items
 
 
 # Needed commands
@@ -31,8 +32,8 @@ Factions system that encourages building actual castles and structures rather th
 * ~~Kingdom Throne TP~~
 * ~~Kingdom Deposit~~
 * ~~Kingdom Withdraw~~
-* Rename kingdom
-* Set kingdom tagline
+* ~~Kingdom Top~~
+* ~~Set kingdom tagline~~
 * Invite member to kingdom
 * Banish member from kingdom
 * Leave kingdom (if member, not owner)

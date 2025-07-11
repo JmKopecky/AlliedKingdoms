@@ -26,6 +26,12 @@ public class ClaimInterferenceListeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
+
+        //check if block is below configured min y level
+        if (event.getBlock().getY() < AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("chunks.protection-min-y")) {
+            return;
+        }
+
         Chunk chunk = event.getBlock().getChunk();
         PersistentDataContainer chunkContainer = chunk.getPersistentDataContainer();
         NamespacedKey chunkKey = PDCDataKeys.getChunkKingdomKey();
@@ -60,6 +66,12 @@ public class ClaimInterferenceListeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+
+        //check if block is below configured min y level
+        if (event.getBlock().getY() < AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("chunks.protection-min-y")) {
+            return;
+        }
+
         Chunk chunk = event.getBlock().getChunk();
         PersistentDataContainer chunkContainer = chunk.getPersistentDataContainer();
         NamespacedKey chunkKey = PDCDataKeys.getChunkKingdomKey();
@@ -83,6 +95,15 @@ public class ClaimInterferenceListeners implements Listener {
             //player is not allowed to break blocks in this chunk under normal circumstances
             //check destitution state
             if (!KingdomUtilMethods.isKingdomDestitute(chunkKingdom)) {
+
+                //check if player is using a valid raid item
+                PersistentDataContainer dataContainer = player.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer();
+                if (dataContainer.has(PDCDataKeys.getRaidItemKey(), PersistentDataType.STRING)) {
+                    String raidItemData = dataContainer.get(PDCDataKeys.getRaidItemKey(), PersistentDataType.STRING);
+                    if (raidItemData.contains("raiditem")) {
+                        return;
+                    }
+                }
                 player.sendMessage(Component.text("You are not allowed to break blocks in chunks owned by " + chunkKingdom, Palette.ERROR));
                 event.setCancelled(true);
                 return;

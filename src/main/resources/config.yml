@@ -1,5 +1,17 @@
-root:
-  kingdom-charge-delay-multiplier: 1
-  kingdom-charge-cost: 10
-  kingdom-strike-limit-before-destitution: 3
-  kingdom-strike-limit-before-dissolution: 14
+taxes:
+  charge-delay-multiplier: 1 #default is a day. 0.5 would therefore equal every half day
+  charge-cost: 10 #money charged to the kingdom's vault per chunk they own
+  strike-limit-before-destitution: 3 #number of charge periods (as per charge-delay-multiplier) before the kingdom's claims will no longer be protected
+  strike-limit-before-dissolution: 14 #number of charge periods (as per charge-delay-multiplier) before the kingdom is deleted
+gear:
+  raid-tool-wood-cost: 5 #cost of wooden raid tools in the quartermaster shop
+  raid-tool-stone-cost: 10 #cost of stone raid tools in the quartermaster shop
+  raid-tool-gold-cost: 20 #cost of gold raid tools in the quartermaster shop
+  raid-tool-iron-cost: 50 #cost of iron raid tools in the quartermaster shop
+claim:
+  protection-min-y: 40 #blocks below this y-level will not be afforded claim protection
+  max-claims: 625 #max claims a kingdom can have
+  force-adjacent: true #force new claims after the first to be adjacent to other claims of the same kingdomp
+metadata:
+  max-tagline-length: 30 #max characters in a tagline
+  max-name-length: 18 #max characters in a kingdom name

@@ -4,12 +4,12 @@ import dev.jkopecky.alliedkingdoms.AlliedKingdomsBootstrapper;
 import dev.jkopecky.alliedkingdoms.Palette;
 import dev.jkopecky.alliedkingdoms.data.Database;
 import dev.jkopecky.alliedkingdoms.data.PDCDataKeys;
+import io.papermc.paper.util.Tick;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Server;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -17,12 +17,57 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.sql.*;
 
 public class KingdomEvents implements Listener {
+
+
+    @EventHandler()
+    public void onPlayerMove(PlayerMoveEvent event) {
+
+        //check that the player is between two different chunks
+        Chunk from = event.getFrom().getChunk();
+        Chunk to = event.getTo().getChunk();
+        if (from == to) {
+            return;
+        }
+
+        //get chunk kingdoms
+        NamespacedKey chunkKey = PDCDataKeys.getChunkKingdomKey();
+        PersistentDataContainer fromContainer = from.getPersistentDataContainer();
+        String fromKingdom = "";
+        PersistentDataContainer toContainer = to.getPersistentDataContainer();
+        String toKingdom = "";
+        if (fromContainer.has(chunkKey, PersistentDataType.STRING)) {
+            fromKingdom = fromContainer.get(chunkKey, PersistentDataType.STRING);
+        }
+        if (toContainer.has(chunkKey, PersistentDataType.STRING)) {
+            toKingdom = toContainer.get(chunkKey, PersistentDataType.STRING);
+        }
+
+        //check moving between kingdoms
+        if (fromKingdom.equals(toKingdom)) {
+            return;
+        }
+
+        //send player the title on their screen
+        Player player = event.getPlayer();
+        Title title;
+        if (toKingdom.isEmpty()) {
+            title = Title.title(
+                    Component.empty(), Component.text("Wilderness", Palette.WILDERNESS_SUBTITLE, TextDecoration.BOLD),
+                    Title.Times.times(Tick.of(10), Tick.of(30), Tick.of(10)));
+        } else {
+            title = Title.title(
+                    Component.empty(), Component.text(toKingdom, Palette.ACCENT, TextDecoration.BOLD),
+                    Title.Times.times(Tick.of(10), Tick.of(30), Tick.of(10)));
+        }
+        player.showTitle(title);
+    }
 
 
     @EventHandler(ignoreCancelled = true)

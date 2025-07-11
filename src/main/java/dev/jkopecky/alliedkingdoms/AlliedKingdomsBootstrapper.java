@@ -1,5 +1,6 @@
 package dev.jkopecky.alliedkingdoms;
 
+import dev.jkopecky.alliedkingdoms.commands.CheatRaidingToolsCommand;
 import dev.jkopecky.alliedkingdoms.commands.RootKingdomCommand;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
@@ -17,6 +18,7 @@ public class AlliedKingdomsBootstrapper implements PluginBootstrap {
     public void bootstrap(BootstrapContext bootstrapContext) {
         bootstrapContext.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             RootKingdomCommand.register(commands.registrar());
+            CheatRaidingToolsCommand.register(commands.registrar());
         });
     }
 

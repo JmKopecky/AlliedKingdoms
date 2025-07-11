@@ -24,6 +24,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import javax.xml.transform.Result;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ClaimLandCommand {
 
@@ -73,9 +74,6 @@ public class ClaimLandCommand {
                 return Command.SINGLE_SUCCESS;
             }
 
-            //claim chunk
-            chunkContainer.set(chunkKingdomKey, PersistentDataType.STRING, playerKingdom);
-
             Server server = Bukkit.getServer();
             server.getScheduler().runTaskAsynchronously(AlliedKingdomsBootstrapper.pluginInstance, () -> {
                 try (Connection connection = DriverManager.getConnection(Database.databaseUrl)) {
@@ -84,17 +82,71 @@ public class ClaimLandCommand {
                     statement.setString(1, playerKingdom);
                     ResultSet result = statement.executeQuery();
 
+                    //get prior chunk list
                     String chunks = "";
                     if (result.next()) {
                         chunks = result.getString("chunks");
                     } else {
                         throw new SQLException();
                     }
+
+                    //check adjacent chunks
+                    boolean forceAdjacent = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getBoolean("claim.force-adjacent");
+                    if (!chunks.isEmpty() && forceAdjacent) {
+                        int chunkX = chunk.getX();
+                        int chunkZ = chunk.getZ();
+                        boolean adjacent = false;
+
+                        //get all adjacent chunks
+                        ArrayList<Chunk> adjacentChunks = new ArrayList<>();
+                        adjacentChunks.add(chunk.getWorld().getChunkAt(chunkX + 1, chunkZ));
+                        adjacentChunks.add(chunk.getWorld().getChunkAt(chunkX - 1, chunkZ));
+                        adjacentChunks.add(chunk.getWorld().getChunkAt(chunkX, chunkZ + 1));
+                        adjacentChunks.add(chunk.getWorld().getChunkAt(chunkX, chunkZ - 1));
+
+                        //check if kingdom matches
+                        for (Chunk adjChunk : adjacentChunks) {
+                            PersistentDataContainer adjChunkContainer = adjChunk.getPersistentDataContainer();
+                            if (adjChunkContainer.has(chunkKingdomKey, PersistentDataType.STRING)) {
+                                String kName = adjChunkContainer.get(chunkKingdomKey, PersistentDataType.STRING);
+                                if (kName.equals(playerKingdom)) {
+                                    adjacent = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!adjacent) {
+                            if (sender == executor) {
+                                executor.sendMessage(Component.text("Chunks claimed after the first must be adjacent to other claimed territory", Palette.ERROR));
+                            } else {
+                                sender.sendMessage(Component.text("Chunks claimed after the first must be adjacent to other claimed territory", Palette.ERROR));
+                            }
+                            return;
+                        }
+                    }
+
+                    //check max chunk limit
+                    int maxChunks = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("claim.max-claims");
+                    if (chunks.split(",").length >= maxChunks) {
+                        if (executor == sender) {
+                            executor.sendMessage(Component.text("Your kingdom already has the maximum claims", Palette.ERROR));
+                        } else {
+                            sender.sendMessage(Component.text("Target's kingdom already has the maximum claims", Palette.ERROR));
+                        }
+                        return;
+                    }
+
+                    //claim chunk
+                    chunkContainer.set(chunkKingdomKey, PersistentDataType.STRING, playerKingdom);
+
+                    //add chunk to list
                     if (chunks.isEmpty()) {
                         chunks += chunk.getChunkKey();
                     } else {
                         chunks += "," + chunk.getChunkKey();
                     }
+
+                    //update database
                     sql = "UPDATE kingdoms SET chunks=? WHERE name=?;";
                     statement = connection.prepareStatement(sql);
                     statement.setString(1, chunks);
@@ -113,9 +165,6 @@ public class ClaimLandCommand {
                                     .append(Component.text(playerKingdom, Palette.ACCENT))));
                 }
             });
-
-
-
         } else {
             sender.sendMessage(Component.text("Land claimer must be a player", Palette.ERROR));
         }

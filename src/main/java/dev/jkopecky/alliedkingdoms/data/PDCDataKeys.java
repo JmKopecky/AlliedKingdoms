@@ -9,7 +9,8 @@ public class PDCDataKeys {
 
     private static NamespacedKey playerKingdomKey = null;
     private static NamespacedKey chunkKingdomKey = null;
-    private static NamespacedKey throneKingdomKey = null;
+    private static NamespacedKey raidItemKey = null;
+    private static NamespacedKey lastTitleKey = null;
 
 
     public static NamespacedKey getPlayerKingdomKey() {
@@ -28,10 +29,18 @@ public class PDCDataKeys {
     }
 
 
-    public static NamespacedKey getThroneKingdomKey() {
-        if (throneKingdomKey == null) {
-            throneKingdomKey = new NamespacedKey(AlliedKingdomsBootstrapper.pluginInstance, "throne_kingdom");
+    public static NamespacedKey getRaidItemKey() {
+        if (raidItemKey == null) {
+            raidItemKey = new NamespacedKey(AlliedKingdomsBootstrapper.pluginInstance, "raid_item");
         }
-        return throneKingdomKey;
+        return raidItemKey;
+    }
+
+
+    public static NamespacedKey getLastTitleKey() {
+        if (lastTitleKey == null) {
+            lastTitleKey = new NamespacedKey(AlliedKingdomsBootstrapper.pluginInstance, "last_title");
+        }
+        return lastTitleKey;
     }
 }

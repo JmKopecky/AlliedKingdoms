@@ -34,6 +34,9 @@ public class RootKingdomCommand {
         root.then(KingdomTeleportCommand.get());
         root.then(KingdomDepositCommand.get());
         root.then(KingdomWithdrawCommand.get());
+        root.then(KingdomTopCommand.get());
+        root.then(KingdomTaglineCommand.get());
+        root.then(KingdomQuartermasterCommand.get());
 
         String description = "Manage kingdoms";
         ArrayList<String> aliases = new ArrayList<>();

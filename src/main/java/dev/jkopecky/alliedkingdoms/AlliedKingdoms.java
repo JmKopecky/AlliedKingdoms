@@ -3,6 +3,7 @@ package dev.jkopecky.alliedkingdoms;
 import dev.jkopecky.alliedkingdoms.data.Database;
 import dev.jkopecky.alliedkingdoms.events.ClaimInterferenceListeners;
 import dev.jkopecky.alliedkingdoms.events.KingdomEvents;
+import dev.jkopecky.alliedkingdoms.inventories.QuartermasterInventory;
 import dev.jkopecky.alliedkingdoms.util.KingdomUtilMethods;
 import io.papermc.paper.util.Tick;
 import net.kyori.adventure.text.Component;
@@ -56,14 +57,14 @@ public class AlliedKingdoms extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new ClaimInterferenceListeners(), this);
         Bukkit.getPluginManager().registerEvents(new KingdomEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new QuartermasterInventory(), this);
 
         //init database
         Database.initDatabase();
 
         //charge kingdoms money based on claims
-        final double kingdomChargeDelayMultiplier = getConfig().getDouble("root.kingdom-charge-delay-multiplier", 1);
+        final double kingdomChargeDelayMultiplier = getConfig().getDouble("taxes.charge-delay-multiplier", 1);
         long period = (long) (kingdomChargeDelayMultiplier * Tick.tick().fromDuration(Duration.ofDays(1)));
-        System.out.println(period);
         this.getServer().getScheduler().runTaskTimerAsynchronously(this, AlliedKingdoms::chargeKingdomsTask, period, period);
     }
 
@@ -125,7 +126,7 @@ public class AlliedKingdoms extends JavaPlugin implements Listener {
 
 
     private static void chargeKingdomsTask() {
-        double costPerChunk = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getDouble("root.kingdom-charge-cost");
+        double costPerChunk = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getDouble("taxes.charge-cost");
 
         try (Connection connection = DriverManager.getConnection(Database.databaseUrl)) {
             String sql = "SELECT * FROM kingdoms";
@@ -207,8 +208,8 @@ public class AlliedKingdoms extends JavaPlugin implements Listener {
                         }
                     }
 
-                    int destitutionLimit = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("root.kingdom-strike-limit-before-destitution");
-                    int dissolutionLimit = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("root.kingdom-strike-limit-before-dissolution");
+                    int destitutionLimit = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("taxes.strike-limit-before-destitution");
+                    int dissolutionLimit = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("taxes.strike-limit-before-dissolution");
                     if (currentStrikes == destitutionLimit) {
                         //broadcast that the kingdom can no longer defend its territory
                         AlliedKingdomsBootstrapper.pluginInstance.getServer().broadcast(

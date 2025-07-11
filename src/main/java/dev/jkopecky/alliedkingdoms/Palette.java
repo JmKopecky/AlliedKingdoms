@@ -10,4 +10,5 @@ public class Palette {
     public static final TextColor ACCENT = TextColor.color(0x459EB7);
     public static final TextColor ERROR = TextColor.color(200, 10, 10);
     public static final TextColor STRIKE_COLOR = TextColor.color(240, 5, 5);
+    public static final TextColor WILDERNESS_SUBTITLE = TextColor.color(5, 150, 5);
 }

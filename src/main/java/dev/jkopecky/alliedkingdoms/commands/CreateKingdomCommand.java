@@ -52,7 +52,13 @@ public class CreateKingdomCommand {
         try {
             name = StringArgumentType.getString(context, "name");
         } catch (IllegalArgumentException e) {
-            executor.sendMessage(Component.text("Name must be specified", Palette.ERROR));
+            sender.sendMessage(Component.text("Name must be specified", Palette.ERROR));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        int maxNameLength = AlliedKingdomsBootstrapper.pluginInstance.getConfig().getInt("metadata.max-name-length");
+        if (name.length() > maxNameLength) {
+            sender.sendMessage(Component.text("Specified name must not exceed " + maxNameLength + " characters.", Palette.ERROR));
             return Command.SINGLE_SUCCESS;
         }
 
